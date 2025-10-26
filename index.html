@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
+input,button{
+    padding: 8px 12px;
+}
+
+</style>
+
+<body>
+    <div class="container">
+        <h1>Plataforma de vagas</h1>
+        <div class="inputs">
+            <input type="text" id="localizacao" placeholder="Buscar vaga em...">
+            <input type="text" id="nomeDaVaga" placeholder="Nome da vaga">
+        </div>
+        <button id="buscarVagas">Buscar vaga</button>
+
+        <ul id="listaDeVagas"></ul>
+
+    </div>
+    <script>
+        let nomeDaVaga = document.getElementById('nomeDaVaga')
+        let localizacao = document.getElementById('localizacao')
+        const btnBuscar = document.getElementById('buscarVagas');
+        let ul = document.getElementById('listaDeVagas')
+
+
+        async function fetchData(search, location) {
+            ul.innerHTML = ''
+
+            try {
+                let res = await fetch('http://localhost:3000/jobs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ search, location })
+                })
+
+
+                let arrayDeVagas = await res.json()
+                console.log(arrayDeVagas)
+
+                arrayDeVagas.jobs.forEach(vaga => {
+
+
+                    let li = document.createElement('li')
+
+                    li.innerHTML = `<h2>${vaga.title}</h2><p>${vaga.company}</p><p>${vaga.location}</p><a href="${vaga.link}" target='_blank'>Ver vaga</a>`
+                    ul.appendChild(li)
+                })
+            } catch (error) {
+                console.error('Erro ao buscar vagas:', error);
+                ul.innerHTML = '<li>Nenhuma vaga no momento... Tente novamente.</li>';
+            }
+        }
+
+
+        btnBuscar.addEventListener('click', () => {
+            const search = nomeDaVaga.value.trim();
+            const location = localizacao.value.trim();
+            if (!search || !location) {
+                alert('Preencha os campos de vaga e localização.');
+                return;
+            }
+
+            fetchData(search, location);
+        });
+
+
+
+        fetchData()
+
+
+
+
+    </script>
+
+
+</body>
+
+</html>
