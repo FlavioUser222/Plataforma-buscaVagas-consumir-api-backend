@@ -31,7 +31,6 @@ input,button{
     <div class="container">
         <h1>Plataforma de vagas</h1>
         <div class="inputs">
-            <input type="text" id="localizacao" placeholder="Buscar vaga em...">
             <input type="text" id="nomeDaVaga" placeholder="Nome da vaga">
         </div>
         <button id="buscarVagas">Buscar vaga</button>
@@ -46,7 +45,7 @@ input,button{
         let ul = document.getElementById('listaDeVagas')
 
 
-        async function fetchData(search, location) {
+        async function fetchData(query) {
             ul.innerHTML = ''
 
             try {
@@ -55,7 +54,7 @@ input,button{
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ search, location })
+                    body: JSON.stringify({ query })
                 })
 
 
@@ -76,16 +75,14 @@ input,button{
             }
         }
 
-
         btnBuscar.addEventListener('click', () => {
             const search = nomeDaVaga.value.trim();
-            const location = localizacao.value.trim();
-            if (!search || !location) {
+            if (!search) {
                 alert('Preencha os campos de vaga e localização.');
                 return;
             }
 
-            fetchData(search, location);
+            fetchData(search);
         });
 
 

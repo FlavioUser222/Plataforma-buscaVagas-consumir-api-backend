@@ -9,30 +9,27 @@ const app = express()
 app.use(express.json());
 app.use(cors())
 
-app.post('/jobs',async(req, res) => {
-
-    const { search, location} = req.body
+app.post('/jobs', async (req, res) => {
+    const { query } = req.body
 
 
     try {
-        const response = await axios.post("https://linkedin-jobs-search.p.rapidapi.com/", {
-            search_terms: search,
-            location: location,
-            page: 1,
-        }, {
+        const response = await axios.get("https://jsearch.p.rapidapi.com/search", {
+            params: { query: query , page: "1" },
             headers: {
-                "content-type": "application/json",
                 "X-RapidAPI-Key": process.env.RAPIDAPI_KEY,
-                "X-RapidAPI-Host": "linkedin-jobs-search.p.rapidapi.com",
+                "X-RapidAPI-Host": "jsearch.p.rapidapi.com"
             },
-        })
+        });
+        const jobsData = response.data.data;
 
-        const jobs = response.data.map((job) => ({
+        const jobs = jobsData.map((job) => ({
             title: job.job_title,
-            company: job.company_name,
-            location: job.job_location,
-            link: job.linkedin_job_url_cleaned,
+            company: job.employer_name,
+            location: job.job_city || job.job_country,
+            link: job.job_apply_link,
         }))
+
         res.json({ total: jobs.length, jobs })
 
     } catch (error) {
