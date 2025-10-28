@@ -15,7 +15,7 @@ app.post('/jobs', async (req, res) => {
 
     try {
         const response = await axios.get("https://jsearch.p.rapidapi.com/search", {
-            params: { query: query , page: "1" },
+            params: { query: query , page: "1" ,country:"br",language:"portuguese"},
             headers: {
                 "X-RapidAPI-Key": process.env.RAPIDAPI_KEY,
                 "X-RapidAPI-Host": "jsearch.p.rapidapi.com"
